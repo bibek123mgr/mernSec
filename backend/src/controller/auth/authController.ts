@@ -4,13 +4,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
 import otpGenerator from 'otp-generator'
 import sendMail from "../../services/EmailSender";
-import AppErrorHandler from "../../services/AppErrorHandler";
 
 class AuthController {
     async createUser(req: Request, res: Response,next:NextFunction): Promise<void> {
-        const { username, email, password, role } = req.body
+        const { username, email, password } = req.body
+        console.log(req.body)
         if (!username || !email || !password) {
-            return next(new AppErrorHandler("please give all credentials",400))
+            res.status(400).json({
+                message:'require all fields'
+            })
+            return 
         }
         const [userExist] = await User.findAll({
             where: {
@@ -18,13 +21,16 @@ class AuthController {
             }
         })
         if (userExist) {
-            return next(new AppErrorHandler("user user with this email already exist",400))
+            res.status(403).json({
+                message:'user already exist'
+            })
+            return 
+
         }
         const user=await User.create({
             username,
             email,
             password: hashPassword(password),
-            role
         })
         const token=getJwt(user.id)
         res.status(200).json({
@@ -39,7 +45,10 @@ class AuthController {
     async loginUser(req: Request, res: Response,next:NextFunction): Promise<void> {
         const { email, password } = req.body
         if (!email || !password) {
-            return next(new AppErrorHandler("please give all credentials",400))
+         res.status(400).json({
+                message:'require all fields'
+            })
+            return 
         }
         const [userExist] = await User.findAll({
             where: {
@@ -48,12 +57,17 @@ class AuthController {
             attributes:['id','username','password','email','role',]
         })
         if (!userExist) {
-           return next(new AppErrorHandler("invalid credentials",404))
+            res.status(400).json({
+                message:'invaid credentails'
+            })
+            return 
         }
         const validPassword = bcrypt.compareSync(password, userExist.password)
         if (!validPassword) {
-           return next(new AppErrorHandler("invalid credentials",404))
-        }
+            res.status(400).json({
+                message:'invaid credentails'
+            })
+            return         }
         const token=getJwt(userExist.id)
         res.status(200).json({
             message: 'successfully login',
@@ -67,8 +81,10 @@ class AuthController {
     async forgetPassword(req: Request, res: Response,next:NextFunction): Promise<void> {
         const { email } = req.body
         if (!email) {
-            return next(new AppErrorHandler("please give all credentials",400))
-        }
+         res.status(400).json({
+                message:'require all fields'
+            })
+            return         }
         const userEmailExist = await User.findOne({
             where: {
                 email
@@ -76,8 +92,10 @@ class AuthController {
         })
 
         if (!userEmailExist) {
-            return next(new AppErrorHandler("invalid credentials",404))
-        }
+            res.status(400).json({
+                message:'invaid credentails'
+            })
+            return          }
         const otp = otpGenerator.generate(6)
         const option = {
             to: email,
@@ -99,7 +117,10 @@ class AuthController {
         const { email, otp } = req.body
 
         if (!email || !otp) {
-            return next(new AppErrorHandler("please give all credentials",400))
+         res.status(400).json({
+                message:'require all fields'
+            })
+            return
         }
         const userEmailExist = await User.findOne({
             where: {
@@ -109,8 +130,10 @@ class AuthController {
         })
 
         if (!userEmailExist) {
-            return next(new AppErrorHandler("invalid credentials",404))
-        }
+          res.status(400).json({
+                message:'invaid credentails'
+            })
+            return          }
         userEmailExist.isVerifiedOtp = true
         await userEmailExist.save()
         res.status(200).json({
@@ -121,11 +144,15 @@ class AuthController {
         const { email, otp, newPassord, confirmNewPassword } = req.body
 
         if (!email || !otp || !newPassord || !confirmNewPassword) {
-            return next(new AppErrorHandler("provide all credentials",400))
-        }
+         res.status(400).json({
+                message:'require all fields'
+            })
+            return        }
         if (newPassord !== confirmNewPassword) {
-             return next(new AppErrorHandler("password doesnot match",400))
-        }
+          res.status(400).json({
+                message:'password doenot match'
+            })
+            return           }
         const userEmailExist = await User.findOne({
             where: {
                 email,
@@ -134,8 +161,10 @@ class AuthController {
         })
 
         if (!userEmailExist) {
-            return next(new AppErrorHandler("invalid credentials",404))
-        }
+          res.status(400).json({
+                message:'invaid credentails'
+            })
+            return          }
         if (userEmailExist?.isVerifiedOtp == true && userEmailExist) {
             userEmailExist.otp = ''
             userEmailExist.isVerifiedOtp = false

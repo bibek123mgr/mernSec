@@ -1,11 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home/Home";
+import Login from "./global/components/form/Login";
 import Navbar from "./global/components/navbar/Navbar";
-import Login from "./pages/auth/login/Login";
-import SignUp from "./pages/auth/signup/SignUp";
+// import Login from "./pages/auth/login/Login";
+// import SignUp from "./pages/auth/signup/SignUp";
 import { Provider } from "react-redux";
 import store from "./store/Store";
 import Footer from "./global/components/footer/Footer";
+import Signup from "./global/components/form/Signup";
+import Profile from "./pages/profile/Profile";
 
 function App() {
   return (
@@ -15,8 +18,10 @@ function App() {
       <Navbar />
       <Routes>
          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} /> 
-          <Route path="/register" element={<SignUp/>} /> 
+          {/* <Route path="/login" element={<Login />} />  */}
+           <Route path="/login" element={<Login />} /> 
+            <Route path="/register" element={<Signup />} /> 
+            <Route path="/profile" element={<Profile/>}/>
           </Routes>
       <Footer/>
       </BrowserRouter>

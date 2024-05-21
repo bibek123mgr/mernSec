@@ -32,7 +32,7 @@ const initialState:AuthState = {
 
 const AuthSlice = createSlice({
     name: 'auth',
-    initialState,
+    initialState:initialState,
     reducers: {
         setUser(state: AuthState, action: PayloadAction<User>) {
             state.data.user=action.payload
@@ -54,8 +54,9 @@ export function registerUser(data:registerData){
        try {
            const response = await API.post(`auth/registerUser`,data)
            const resData:Data=response.data.data
-           dispatch(setUser(resData.user))
-           dispatch(setToken(resData.token))
+        //    dispatch(setUser(resData.user))
+           //    dispatch(setToken(resData.token))
+           console.log(resData)
            dispatch(setStatus(STATUSES.SUCCESS))
        } catch (error) {
         dispatch(setStatus(STATUSES.ERROR))
@@ -64,14 +65,16 @@ export function registerUser(data:registerData){
 }
 
 export function loginUser(data:LoginData) {
-    return async function loginUserThunk(dispatch: any) {
+    return async function loginUserThunk(dispatch:any) {
         setStatus(dispatch(STATUSES.LOADING))
         try {
             let response = await API.post(`auth/login`, data)
-           const resData:Data=response.data.data
-           dispatch(setUser(resData.user))
-           dispatch(setToken(resData.token))
-        setStatus(dispatch(STATUSES.LOADING))
+            const resData: Data = await response.data.data
+                       console.log(resData)
+
+        //    dispatch(setUser(resData.user))
+        //    dispatch(setToken(resData.token))
+        setStatus(dispatch(STATUSES.SUCCESS))
         } catch (error) {
         setStatus(dispatch(STATUSES.LOADING))
 

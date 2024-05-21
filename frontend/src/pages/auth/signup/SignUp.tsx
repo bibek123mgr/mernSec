@@ -1,6 +1,6 @@
 import React from 'react'
-import Form from '../components/Form'
-Form
+import Form from '../Form'
+
 const SignUp:React.FC = () => {
   return (
   <Form page="0"/>

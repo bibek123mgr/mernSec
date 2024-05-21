@@ -28,10 +28,11 @@ import orderRoute from './routes/user/order/orderRoute'
 import reviewRoute from './routes/user/review/reviewRoute'
 import globalReveviewRoute from './routes/gloabl/review/reviewRoute'
 import adminUserRoute from './routes/admin/user/userRoute'
+import dataService from './routes/admin/dataservice/dataServiceRoute'
 //router end
 
 app.use("/api/auth", authRoute)
-app.use("/api/admin", adminProductRoute, adminOrderRoute,adminUserRoute)
+app.use("/api/admin", adminProductRoute, adminOrderRoute,adminUserRoute,dataService)
 app.use("/api/orders",orderRoute)
 app.use("/api/products", globalProductRoute)
 app.use("/api/carts", userCartRoute)

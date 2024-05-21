@@ -1,9 +1,11 @@
-import Carousel from "./components/heroSection/Carousel"
+import Product from "../product/Product"
+import Carousel from "../../global/components/heroSection/Carousel"
 
 const Home = () => {
   return (
     <div>
-      <Carousel/>
+      <Carousel />
+      <Product/>
     </div>
   )
 }

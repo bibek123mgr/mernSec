@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 interface FormProps {
   page: string;
+
 }
 
 const Form: React.FC<FormProps> = ({ page }) => {
