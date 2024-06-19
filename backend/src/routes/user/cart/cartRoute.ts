@@ -10,8 +10,10 @@ router.use(AuthMiddleware.isAuthenticated, AuthMiddleware.restrictTo(Role.Custom
 router.route('/')
     .post(ProductMiddleware.isValidProduct,errorHandler(CartController.addToCart))
     .get(errorHandler(CartController.fetchMyCart))
+    .delete(errorHandler(CartController.EmptyCart))
+
 router.route('/:id')
-    .post(errorHandler(CartController.deleteCart))
+    .delete(errorHandler(CartController.deleteCart))
     .patch(errorHandler(CartController.updateCart))
     
 export default router

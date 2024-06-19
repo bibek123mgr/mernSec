@@ -31,10 +31,30 @@ class User extends Model {
     declare password: string
 
     @Column({
+        type:DataType.ENUM('male','female','others')
+    })
+    declare gender:'male'| 'female' | 'others'
+    
+    @Column({
+        type:DataType.INTEGER
+    })
+    declare number:number
+    
+    @Column({
+        type:DataType.INTEGER
+    })
+    declare otpRequestTime: number
+    
+    @Column({
+        type:DataType.STRING
+    })
+    declare address:string
+
+    @Column({
         type: DataType.ENUM('admin', 'customer'),
         defaultValue: 'customer',
     })
-    declare role: string
+    declare role: 'customer' | 'admin'
     @Column({
         type: DataType.STRING
     })

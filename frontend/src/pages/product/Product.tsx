@@ -1,19 +1,20 @@
-import React from 'react'
-import ProductItem from '../../global/components/productitem/ProductItem'
+import React from "react";
+import ProductCart from "./component/ProductCart";
+import { useAppSelector } from "../../store/hook";
 
-const Product:React.FC = () => {
+const Product: React.FC = () => {
+  const { product } = useAppSelector((store) => store.product);
+
   return (
-    <div className='flex gap-10 items-center justify-center flex-wrap max-w-[1400px] px-5 mx-auto my-0'>
-          <ProductItem />
-          <ProductItem/>
-          <ProductItem />
-          <ProductItem />
-          <ProductItem />
-          <ProductItem/>
-          <ProductItem />
-          <ProductItem/>
+    <div className="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16">
+      <h1 className="text-4xl py-4 text-center">Products</h1>
+      <hr />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-6">
+        {product &&
+          product.map((item) => <ProductCart product={item} key={item.id} />)}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Product
+export default Product;

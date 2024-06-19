@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import Category from "../../../database/models/productCategoryModel";
 import { ProdRequest } from "../../../services/typeDefine";
 import Review from "../../../database/models/reviewModel";
+import User from "../../../database/models/userModel";
 class ProductController {
     async fetchProducts(req: Request, res: Response): Promise<void> {
         const products = await Product.findAll({
@@ -12,13 +13,6 @@ class ProductController {
                 attributes: ['id', 'categoryName']
             }]
         })
-        if (products.length === 0) {
-            res.status(400).json({
-                message: 'no data to fetch',
-                data: []
-            })
-            return
-        }
         res.status(200).json({
             message: 'products fetch successfully',
             data: products
@@ -36,7 +30,12 @@ class ProductController {
         const reviews = await Review.findAll({
             where:{
                 productId
-            }
+            },
+            attributes: ["id", "rating", "comment", "createdAt","updatedAt"],
+            include: [{
+                model: User,
+                attributes:['id',"username"]
+            }]
         })
         res.status(200).json({
             message: 'product fetch successfully',

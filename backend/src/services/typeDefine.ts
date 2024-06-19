@@ -1,5 +1,15 @@
 
 import { Request } from 'express'
+export enum Role {
+    Admin = 'admin',
+    Customer = 'customer'
+}
+
+export enum gender {
+    Male = 'male',
+    Female = 'felmale',
+    Others='others'
+}
 export interface AuthRequest extends Request {
     user?: {
         id: string,
@@ -7,15 +17,16 @@ export interface AuthRequest extends Request {
         email: string,
         role: string,
         password: string,
+        address: string,
+        gender: string,
+        number:number,
         otp: string,
+        otpRequestTime:number
         isVerifiedOtp: boolean
 
     }
 }
-export enum Role {
-    Admin = 'admin',
-    Customer = 'customer'
-}
+
 
 export enum environment {
     PROD = 'production',

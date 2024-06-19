@@ -1,40 +1,89 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { IoIosMenu } from "react-icons/io";
 
-const Navbar:React.FC = () => {
-  return (
-<nav className="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-  <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-    <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
-        <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
-    </a>
-    <button data-collapse-toggle="navbar-solid-bg" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-solid-bg" aria-expanded="false">
-        <span className="sr-only">Open main menu</span>
-        <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
-        </svg>
-    </button>
-    <div className="hidden w-full md:block md:w-auto" id="navbar-solid-bg">
-      <ul className="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
-        <li>
-          <Link to="#" className="block py-2 px-3 md:p-0 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:dark:text-blue-500 dark:bg-blue-600 md:dark:bg-transparent" aria-current="page">Home</Link>
-        </li>
-        <li>
-          <Link to="#" className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Services</Link>
-        </li>
-        <li>
-          <Link to="#" className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Pricing</Link>
-        </li>
-        <li>
-          <Link to="#" className="block py-2 px-3 md:p-0 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Contact</Link>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  )
+interface NavbarProps {
+  isAuthenticated: boolean;
+  onLogout: () => void;
 }
 
-export default Navbar
+const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogout }) => {
+  const menu = [
+    { path: "/", name: "Home" },
+    { path: "/about", name: "About Us" },
+    { path: "/services", name: "Services" },
+    { path: "/contact", name: "Contact" },
+  ];
+
+  const [show, setShow] = useState(false);
+  const handleToggle = () => setShow((prev) => !prev);
+
+  const handleLogOut = () => {
+    onLogout();
+  };
+  return (
+    <nav className="bg-gray-100 relative">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+        <a href="#" className="flex items-center space-x-2">
+          <h1 className="text-2xl font-bold dark:text-white">Logo</h1>
+        </a>
+        <button className="md:hidden p-2" onClick={handleToggle}>
+          <IoIosMenu size={30} />
+        </button>
+        <div
+          id="navbar"
+          className={`${
+            show ? "max-h-screen" : "max-h-0"
+          } overflow-hidden transition-max-height duration-500 ease-in-out w-full md:flex md:w-auto md:relative md:max-h-none md:overflow-visible md:bg-transparent`}
+        >
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+            <ul className="flex flex-col md:flex-row md:space-x-4 mt-4 md:mt-0 text-sm font-medium md:items-center">
+              {menu.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="block md:p-2 py-2 text-gray-700 dark:text-white"
+                  >
+                    <span className="text-lg">{item.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            {isAuthenticated && (
+              <div className="flex gap-4">
+                <Link to="/profile">
+                  <i className="fa-regular fa-user text-xl"></i>
+                </Link>
+                <Link to="/cart">
+                  <i className="fa-solid fa-cart-shopping text-xl"></i>
+                </Link>
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/signin"
+                    className="bg-blue-700 p-2 text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Sign In
+                  </Link>
+                  <Link to="/signup" className="p-2">
+                    Sign Up
+                  </Link>
+                </>
+              ) : (
+                <button className="p-2" onClick={handleLogOut}>
+                  Log Out{" "}
+                  <i className="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

@@ -9,6 +9,11 @@ class CartController {
         const productId = req.product?.id
         const userId = req.user?.id
         const { quantity } = req.body
+        if (quantity === 'NaN' || quantity <= 0 || quantity === 'null') {
+            res.status(400).json({
+            message: 'invalid qunatity'
+        }) 
+        }
         const ExisCart = await Cart.findOne({
             where: {
                 productId,
@@ -31,13 +36,14 @@ class CartController {
                 productId,
                 userId
             },
+            attributes:["id","quantity","createdAt"],
             include: [{
                 model: Product,
-                attributes: ["id", "productName", "productStockQty", "productImage", "categoryId"],
-                include: [{
-                    model: Category,
-                    attributes: ["id", "categoryName"]
-                }]
+                attributes: ["id", "productName", "productImage","productPrice","productDescription"],
+                // include: [{
+                //     model: Category,
+                //     attributes: ["id", "categoryName"]
+                // }]
             }]
 
         })
@@ -74,23 +80,42 @@ class CartController {
         })
     }
 
+    async EmptyCart(req: AuthRequest, res: Response): Promise<void>{
+        const userId = req.user?.id
+         const deletedCount = await Cart.destroy({
+            where: { userId }
+        });
+
+        if (deletedCount === 0) {
+             res.status(200).json({
+                message: 'No products to delete'
+             });
+            return
+        }
+
+        res.status(200).json({
+            message: 'Successfully deleted all cart products'
+        });
+    }
+
     async fetchMyCart(req: AuthRequest, res: Response): Promise<void> {
         const userId = req.user?.id
         const cart = await Cart.findAll({
             where: {
                 userId
             },
+            attributes:["id","quantity","createdAt"],
             include: [{
                 model: Product,
-                attributes: ["id", "productName", "productStockQty", "productImage", "categoryId"],
-                include: [{
-                    model: Category,
-                    attributes: ["id", "categoryName"]
-                }]
+                attributes: ["id", "productName", "productImage","productPrice","productDescription"],
+                // include: [{
+                //     model: Category,
+                //     attributes: ["id", "categoryName"]
+                // }]
             }]
         })
         res.status(200).json({
-            message: 'cart product successfully deleted',
+            message: 'cart product successfully fetch',
             data: cart
         })
     }
@@ -100,8 +125,9 @@ class CartController {
         const { quantity } = req.body
         const cartExist = await Cart.findOne({
             where: {
-                userId,
-                id
+                id,
+                userId
+                
             }
         })
         if (!cartExist) {

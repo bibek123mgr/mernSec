@@ -1,19 +1,35 @@
-// Login.tsx
-import React from 'react';
-import Form from '../Form';
-import {useDispatch } from 'react-redux';
-import { loginUser } from '../../../store/slice/AuthSlice';
-const Login: React.FC = () => {
-    const dispatch = useDispatch()
-    const handleLogin = (data) => {
-        dispatch(loginUser(data))
+import React, { useEffect } from "react";
+import Form from "../Form";
+import { useAppDispatch, useAppSelector } from "../../../store/hook";
+import { STATUSES, UserLoginType } from "../../../type/Type";
+import { login, resetStatus } from "../../../store/authSlice";
+
+interface LoginProps {
+  onLogin: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const dispatch = useAppDispatch();
+  const { status } = useAppSelector((store) => store.auth);
+
+  const handleLogin = (data: UserLoginType) => {
+    dispatch(login(data));
+  };
+
+  useEffect(() => {
+    if (status === STATUSES.SUCCESS) {
+      onLogin();
     }
-    return (
-        <div>
-            {/* Pass the prop page to the Form component */}
-            <Form page="1" action={handleLogin} />
-        </div>
-    );
+    if (status !== STATUSES.IDLE) {
+      dispatch(resetStatus());
+    }
+  }, [status, dispatch, onLogin]);
+
+  return (
+    <div>
+      <Form page="signin" onSubmit={handleLogin} />
+    </div>
+  );
 };
 
 export default Login;

@@ -8,12 +8,15 @@ const app: Application = express()
 const PORT: number = Number(process.env.PORT) || 3000
 import './database/dbConfig'
 //view engine
-app.set("view engine","ejs")
 //middleware
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+// app.use(cors({
+//     origin:'*',
+//     credentials: true,
+//     methods: 'GET,POST,PATCH,POST,DELETE',
+//     allowedHeaders: ['Content-Type', 'Authorizcation','Accept']
+// }));
 app.use(cors())
- // data seeding
 adminSeeder()
 productCategoryController.categorySeeder()
 
@@ -29,6 +32,7 @@ import reviewRoute from './routes/user/review/reviewRoute'
 import globalReveviewRoute from './routes/gloabl/review/reviewRoute'
 import adminUserRoute from './routes/admin/user/userRoute'
 import dataService from './routes/admin/dataservice/dataServiceRoute'
+import profileRoute from './routes/user/profile/profileRoute'
 //router end
 
 app.use("/api/auth", authRoute)
@@ -37,7 +41,8 @@ app.use("/api/orders",orderRoute)
 app.use("/api/products", globalProductRoute)
 app.use("/api/carts", userCartRoute)
 app.use("/api/payment", paymentRoute)
-app.use("/api/reviews", reviewRoute,globalReveviewRoute)
+app.use("/api/reviews", reviewRoute, globalReveviewRoute)
+app.use("/api/profile",profileRoute)
 
 app.listen(PORT, () => {
     console.log(`Server has started at http://localhost:${PORT}`)

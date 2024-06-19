@@ -8,7 +8,6 @@ import sendMail from "../../services/EmailSender";
 class AuthController {
     async createUser(req: Request, res: Response,next:NextFunction): Promise<void> {
         const { username, email, password } = req.body
-        console.log(req.body)
         if (!username || !email || !password) {
             res.status(400).json({
                 message:'require all fields'
@@ -32,11 +31,15 @@ class AuthController {
             email,
             password: hashPassword(password),
         })
-        const token=getJwt(user.id)
+        const token = getJwt(user.id)
+        
+        const UserData = await User.findByPk(user.id, {
+            attributes:["id","username","email","gender","address","role","number"]
+        })
         res.status(200).json({
             message: 'new user registered',
             data:{
-                user,
+                user:UserData,
                 token
             }
         })
@@ -50,29 +53,32 @@ class AuthController {
             })
             return 
         }
-        const [userExist] = await User.findAll({
+        const [user] = await User.findAll({
             where: {
                 email
-            },
-            attributes:['id','username','password','email','role',]
+            }
         })
-        if (!userExist) {
+        if (!user) {
             res.status(400).json({
                 message:'invaid credentails'
             })
             return 
         }
-        const validPassword = bcrypt.compareSync(password, userExist.password)
+        const validPassword = bcrypt.compareSync(password, user.password)
         if (!validPassword) {
             res.status(400).json({
                 message:'invaid credentails'
             })
-            return         }
-        const token=getJwt(userExist.id)
+            return
+        }
+        const token = getJwt(user.id)
+        const UserData = await User.findByPk(user.id, {
+            attributes:["id","username","email","gender","address","role","number"]
+        })
         res.status(200).json({
             message: 'successfully login',
             data:{
-                user:userExist,
+                user:UserData,
                 token
             }
         })

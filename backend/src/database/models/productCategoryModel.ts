@@ -12,6 +12,10 @@ class Category extends Model {
         defaultValue: DataType.UUIDV4
     })
     declare id: string
+    // @Column({
+    //     type: DataType.STRING,
+    // })
+    // declare imageUrl: string
 
     @Column({
         type: DataType.STRING,

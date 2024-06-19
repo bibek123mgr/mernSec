@@ -1,117 +1,130 @@
-import { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { AuthProp, userDataType } from "../../type/Type";
 import { Link } from "react-router-dom";
 
-interface FormProps {
-  page: string;
+const Form: React.FC<AuthProp> = ({ page, onSubmit }) => {
+  const [userData, setUserData] = useState<userDataType>({
+    username: "",
+    email: "",
+    password: "",
+  });
 
-}
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit(userData);
+  };
 
-const Form: React.FC<FormProps> = ({ page }) => {
-  const [Userdata, setUserData] = useState({
-  userName:'',
-  email: '',
-  password:''
-  })
-const handleChange = (e:any) => {
-  const { name, value } = e.target
-  setUserData({
-    ...Userdata,
-    [name]:value
-  })
-  }
-  
-  const handleLogin = () => {
-    
-  }
-  const handleRegister = () => {
-    
-  }
-  console.log(page)
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
+      [name]: value,
+    });
+  };
   return (
-<div className="font-[sans-serif] text-[#333] mt-4 min-h-[80vh] flex items-center justify-center">
-      <div className="flex fle-col items-center justify-center py-6 px-4">
-          <div className="border border-gray-300 rounded-md p-6 max-w-md shadow-[0_2px_22px_-4px_rgba(93,96,127,0.2)] max-md:mx-auto">
-            <form className="space-y-3">
+    <section className="bg-white dark:bg-gray-900">
+      <div className="container flex items-center justify-center py-24 px-6 mx-auto">
+        <form className="w-full max-w-md" onSubmit={handleSubmit}>
+          <h1 className="mt-3 mb-8 text-2xl font-semibold text-gray-800 capitalize sm:text-3xl dark:text-white">
+            {page === "signin" ? "Sign in" : "Sign up"}
+          </h1>
+          {page === "signup" && (
+            <div className="relative flex items-center mt-4">
+              <span className="absolute">
+                <i className="fa-regular fa-user w-6 h-6 mx-3 text-gray-300 dark:text-gray-500"></i>
+              </span>
 
-            {page === '1' ?
-            <div className="mb-7">
-                <h2 className="text-4xl font-extrabold">Sign in</h2>
-                <p className="text-sm mt-2">Sign in to your account and explore a world of possibilities. Your journey begins here.</p>
+              <input
+                type="text"
+                className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+                placeholder="Full Name"
+                name="username"
+                onChange={handleChange}
+              />
             </div>
-                :
-            <div className="mb-7">
-                <h2 className="text-4xl font-extrabold">Sign up</h2>
-                  <p className="text-sm mt-2">Unlock endless opportunities as you embark on your journey with us. Your adventure begins with Signup.</p>
-            </div>
-              }
-            {page === '0' ? 
-            <div>
-                <label className="text-sm mb-1 block">User name</label>
-                <div className="relative flex items-center">
-                  <input name="username" type="text" onChange={handleChange} required className="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]" placeholder="Enter user name" />
-                </div>
-              </div>
-              :
-              <div></div>
-          }
+          )}
 
-              <div>
-                <label className="text-sm mb-1 block">Email Address</label>
-                <div className="relative flex items-center">
-                  <input name="email" type="email" onChange={handleChange} required className="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]" placeholder="Enter user name" />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm mb-1 block">Password</label>
-                <div className="relative flex items-center">
-                  <input name="password" type="password" onChange={handleChange} required className="w-full text-sm border border-gray-300 px-4 py-3 rounded-md outline-[#333]" placeholder="Enter password" />
-                </div>
-              </div>
-            <div className="flex items-center justify-between gap-2">
-              {page === '1' ?
-                <>
-                <div className="flex items-center">
-                  <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                  <label htmlFor="remember-me" className="ml-3 block text-sm">
-                    Remember me
-                  </label>
-                </div>
-                <div className="text-sm">
-                  <Link to="/forget" className="text-blue-600 hover:underline">
-                    Forgot your password?
-                  </Link>
-                  </div>
-                </>
-                :
-                <div className="flex items-center">
-                  <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                  <label htmlFor="remember-me" className="ml-3 block text-sm">
-                    I accept all<Link to='/' className="text-blue-600 hover:underline"> Terms & Conditions</Link>
-                  </label>
-                </div>               
-            }
-              </div>
-              <div className="!mt-4">
-              {page !== '1' ?
-                  <button type="button" onSubmit={handleRegister} className="w-full shadow-xl py-2.5 px-4 text-md font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none">
-                  Sign up
-                </button> 
-                :
-                <button type="button" onSubmit={handleLogin} className="w-full shadow-xl py-2.5 px-4 text-md font-semibold rounded text-white bg-[#333] hover:bg-black focus:outline-none">
-                  Sign in
-                </button> 
-                }
-            </div>
-            {page === '1' ?
-              <p className="text-sm !mt-4 text-center">Don't have an account ? <Link to="/register" className="text-blue-600 hover:underline ml-1 whitespace-nowrap">Register here</Link></p>
-              :
-              <p className="text-sm !mt-4 text-center">Already have an account ? <Link to="/login" className="text-blue-600 hover:underline ml-1 whitespace-nowrap">Login</Link></p>
-          }
-            </form>
+          <div className="relative flex items-center mt-4">
+            <span className="absolute">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </span>
+
+            <input
+              type="email"
+              className="block w-full py-3 text-gray-700 bg-white border rounded-lg px-11 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              placeholder="Email address"
+              name="email"
+              onChange={handleChange}
+            />
           </div>
-      </div>
-    </div>
-  )
-}
 
-export default Form
+          <div className="relative flex items-center mt-4">
+            <span className="absolute">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6 mx-3 text-gray-300 dark:text-gray-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+            </span>
+
+            <input
+              type="password"
+              className="block w-full px-10 py-3 text-gray-700 bg-white border rounded-lg dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+              placeholder="Password"
+              name="password"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="mt-6">
+            <button className="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+              {page === "signin" ? "Sign in" : "Sign up"}
+            </button>
+
+            <div className="mt-6 text-center ">
+              {page === "signin" ? (
+                <Link
+                  to="/signup"
+                  className="text-sm text-blue-500 hover:underline dark:text-blue-400"
+                >
+                  Don’t have an account yet? Sign up
+                </Link>
+              ) : (
+                <Link
+                  to="/signin"
+                  className="text-sm text-blue-500 hover:underline dark:text-blue-400"
+                >
+                  Already have an account? Sign in
+                </Link>
+              )}
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  );
+};
+
+export default Form;
