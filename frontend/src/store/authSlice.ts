@@ -1,9 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { STATUSES, UserLoginType, userDataType } from "../type/Type";
 import { API, AuthenticatedAPI } from "../global/http/Index";
+import { RootState } from "./store";
 
 
-interface userData{
+export interface userData{
         id: string,
         username: string,
         email: string,
@@ -84,9 +85,10 @@ export function register(data: userDataType) {
         dispatch(setStatus(STATUSES.LOADING))
         try {
             const response = await API.post('api/auth/register', data)
-            if (response.status === 201) {
+            if (response.status == 201) {
                 dispatch(setUser(response.data.data.user))
                 dispatch(setToken(response.data.data.token))
+                localStorage.setItem("token",response.data.data.token)
             }
         dispatch(setStatus(STATUSES.SUCCESS))
         } catch (error) {
@@ -95,17 +97,26 @@ export function register(data: userDataType) {
     }
 }
 
+
 export function fetchMyprofile() {
-    return async function fetchMyprofileThunk(dispatch:any) {
-        dispatch(setStatus(STATUSES.LOADING))
-        try {
-            const response = await AuthenticatedAPI.get('api/profile')
-            if (response.status === 200) {
-                dispatch(setUser(response.data.data.user))
-            }
-        dispatch(setStatus(STATUSES.SUCCESS))
-        } catch (error) {
-        dispatch(setStatus(STATUSES.ERROR))   
+    return async function fetchMyprofileThunk(dispatch: any, getState: () => RootState) {
+        const state = getState();
+        const currentUser = state.auth.data.user;
+
+        if (currentUser !== undefined && currentUser !== null) {
+            return;
         }
-    }
+        dispatch(setStatus(STATUSES.LOADING));
+        try {
+            const response = await AuthenticatedAPI.get('api/profile');
+            if (response.status === 200) {
+                dispatch(setUser(response.data.data));
+                dispatch(setStatus(STATUSES.SUCCESS));
+            } else {
+                dispatch(setStatus(STATUSES.ERROR));
+            }
+        } catch (error) {
+            dispatch(setStatus(STATUSES.ERROR));
+        }
+    };
 }

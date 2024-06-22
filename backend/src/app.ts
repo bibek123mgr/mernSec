@@ -10,15 +10,12 @@ import './database/dbConfig'
 //view engine
 //middleware
 app.use(express.json())
-// app.use(cors({
-//     origin:'*',
-//     credentials: true,
-//     methods: 'GET,POST,PATCH,POST,DELETE',
-//     allowedHeaders: ['Content-Type', 'Authorizcation','Accept']
-// }));
+app.use(express.static('src/storage/'))
 app.use(cors())
+//seed
 adminSeeder()
 productCategoryController.categorySeeder()
+
 
 //router start
 import authRoute from './routes/auth/authRoute'
@@ -42,7 +39,7 @@ app.use("/api/products", globalProductRoute)
 app.use("/api/carts", userCartRoute)
 app.use("/api/payment", paymentRoute)
 app.use("/api/reviews", reviewRoute, globalReveviewRoute)
-app.use("/api/profile",profileRoute)
+app.use("/api/profile", profileRoute)
 
 app.listen(PORT, () => {
     console.log(`Server has started at http://localhost:${PORT}`)

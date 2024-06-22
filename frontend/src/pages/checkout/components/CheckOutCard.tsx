@@ -7,7 +7,7 @@ interface cartItem {
   cart: cart;
 }
 
-const CartProduct: React.FC<cartItem> = ({ cart }) => {
+const CheckOutCard: React.FC<cartItem> = ({ cart }) => {
   const dispatch = useAppDispatch();
   const handleUpdateQty = (cartId: string, quantity: number) => {
     dispatch(updateCart(cartId, quantity));
@@ -27,7 +27,8 @@ const CartProduct: React.FC<cartItem> = ({ cart }) => {
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
-      <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+      {/* <div className="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0"> */}
+      <div className="flex items-center justify-between gap-6 space-y-0">
         <img
           className="h-20 w-20 dark:hidden"
           src={cart.Product.productImage}
@@ -75,7 +76,6 @@ const CartProduct: React.FC<cartItem> = ({ cart }) => {
           <h1 className="font-semibold text-lg hover:text-indigo-600 transition duration-500 ease-in-out capitalize">
             {cart.Product.productName}
           </h1>
-          {cart.Product.productDescription}
           <div className="flex items-center gap-4">
             <button
               onClick={() => handleDeleteItem(cart.id)}
@@ -108,4 +108,4 @@ const CartProduct: React.FC<cartItem> = ({ cart }) => {
   );
 };
 
-export default CartProduct;
+export default CheckOutCard;

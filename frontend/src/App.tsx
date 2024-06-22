@@ -12,13 +12,14 @@ import Cart from "./pages/cart/Cart";
 import Profile from "./pages/profile/Profile";
 import AccountSetting from "./pages/profile/AccountSetting";
 import Notification from "./pages/profile/Notification";
-import PROAccount from "./pages/profile/PROAccount";
+import Orders from "./pages/profile/Orders";
 import ProfileLayout from "./pages/profile/ProfileLayout";
 import CheckOut from "./pages/checkout/CheckOut";
 import NotFound from "./pages/pagenotfound/NotFound";
 import { useState } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import UnProtectedRoute from "./UnProtectedRoute";
+import OrderDetails from "./pages/profile/OrderDetails";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -53,7 +54,8 @@ function App() {
             <Route index element={<Profile />} />
             <Route path="notification" element={<Notification />} />
             <Route path="setting" element={<AccountSetting />} />
-            <Route path="orders" element={<PROAccount />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="orders/:id" element={<OrderDetails />} />
           </Route>
           <Route path="/cart" element={<Cart />} />
         </Route>

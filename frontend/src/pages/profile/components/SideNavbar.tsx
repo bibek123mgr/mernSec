@@ -5,7 +5,6 @@ interface PathName {
   path: string | undefined;
 }
 const SideNavbar: React.FC<PathName> = ({ path }) => {
-  console.log(path);
   return (
     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
       <h2 className="pl-3 mb-4 text-2xl font-semibold capitalize">{path}</h2>

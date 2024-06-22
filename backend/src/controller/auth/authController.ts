@@ -36,7 +36,7 @@ class AuthController {
         const UserData = await User.findByPk(user.id, {
             attributes:["id","username","email","gender","address","role","number"]
         })
-        res.status(200).json({
+        res.status(201).json({
             message: 'new user registered',
             data:{
                 user:UserData,

@@ -14,7 +14,6 @@ class AuthMiddleware {
             })
             return
         }
-         console.log(token)
         jwt.verify(token, process.env.JWT_SECRET as string, async (error, decoded: any) => {
             if (error) {
                 res.status(403).json({

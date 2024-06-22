@@ -39,17 +39,21 @@ const cartSlice = createSlice({
             if(index !== -1){
                 state.data[index].quantity =action.payload.quantity;
             }
+            console.log(index)
         },
         deleteItem(state: CartState, action: PayloadAction<any>) {
             const index = state.data.findIndex(item => item.id == action.payload)
             if(index !== -1){
                 state.data.splice(index, 1)
             }
+        },
+        emptyCart(state: CartState) {
+            state.data=initialState.data
         }
     }
 });
 
-export const { setCart, setStatus,resetStatus,addToCart,updateCartQty,deleteItem} = cartSlice.actions;
+export const { setCart, setStatus,resetStatus,addToCart,updateCartQty,deleteItem,emptyCart} = cartSlice.actions;
 
 export default cartSlice.reducer;
 
@@ -62,6 +66,20 @@ export function fetchAllCart() {
             const response = await AuthenticatedAPI.get('api/carts')
             if (response.status === 200) {
                 dispatch(setCart(response.data.data))
+            }
+        } catch (error) {
+        dispatch(setStatus(STATUSES.ERROR))  
+        }
+    }
+}
+
+export function deleteBulkDelete() {
+    return async function deleteBulkDeleteThunk(dispatch: any) {
+        dispatch(setStatus(STATUSES.LOADING))
+        try {
+            const response = await AuthenticatedAPI.delete('api/carts')
+            if (response.status === 200) {
+                dispatch(emptyCart())
             }
         } catch (error) {
         dispatch(setStatus(STATUSES.ERROR))  

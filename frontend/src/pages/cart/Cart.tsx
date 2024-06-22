@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import CartProduct from "./components/CartProduct";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { fetchAllCart } from "../../store/cartSlice";
-import { Link } from "react-router-dom";
+import { deleteBulkDelete, fetchAllCart } from "../../store/cartSlice";
+import { Link, useNavigate } from "react-router-dom";
+import Empty from "../../global/components/Empty/Empty";
 
 const Cart: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +23,10 @@ const Cart: React.FC = () => {
     (total, item) => item.quantity + total,
     0
   );
+  const handleClearAllItems = () => {
+    dispatch(deleteBulkDelete());
+  };
+  const navigate = useNavigate();
 
   return (
     <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
@@ -33,10 +38,21 @@ const Cart: React.FC = () => {
         <div className="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
           <div className="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
             <div className="space-y-6">
-              {cart.map((item) => (
-                <CartProduct key={item.id} cart={item} />
-              ))}
+              {cart.length > 0 &&
+                cart.map((item) => <CartProduct key={item.id} cart={item} />)}
+              {cart.length <= 0 && <Empty />}
             </div>
+            {cart.length > 0 && (
+              <div className="my-1 flex justify-end">
+                <button
+                  onClick={handleClearAllItems}
+                  type="button"
+                  className="w-full rounded-lg border border-red-700 px-3 py-2 text-center text-sm font-medium text-red-700 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-600 dark:hover:text-white dark:focus:ring-red-900 lg:w-auto"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
@@ -66,13 +82,13 @@ const Cart: React.FC = () => {
                   </dl>
                 </div>
               </div>
-
-              <Link
-                to="/checkout"
+              <button
+                disabled={cart.length <= 0}
+                onClick={() => navigate("/checkout")}
                 className="flex w-full items-center justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
               >
                 Proceed to Checkout
-              </Link>
+              </button>
 
               <div className="flex items-center justify-center gap-2">
                 <span className="text-sm font-normal text-gray-500 dark:text-gray-400">

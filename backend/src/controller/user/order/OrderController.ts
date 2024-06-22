@@ -49,13 +49,6 @@ class OrderController {
                 userId
             }
         })
-
-        // if (!order) {
-        //     res.status(404).json({
-        //         message:'no order found'
-        //     })
-        //     return
-        // }
         if (order.orderStatus != orderStatus.Pending) {
             res.status(403).json({
                 message:'forbidden for this action'
@@ -75,52 +68,59 @@ async fetchMyOrders(req: AuthRequest, res: Response): Promise<void>{
         where:{
             userId
         },
+        attributes:["id","amount","shippingAddress","phoneNumber","createdAt","orderStatus"],
         include: [
             {
-                model:PaymentDetail
+                model: PaymentDetail,
+                attributes: ["id","paymentMethod","paymentStatus","pidx"],
+
             }
         ]
     })
-    if (orders.length == 0) {
-        res.status(200).json({
-            message: 'no orders yet',
-            data:[]
-        })
-    } else {
         res.status(200).json({
             message: 'orders fetched successfully',
             data: orders
         })
-    }
 }
 
     async fetchMyOrder(req: AuthRequest, res: Response): Promise<void> {
 
         const userId = req.user?.id
         const orderId = req.params.id
-        
          const [order] = await Order.findAll({
             where: {
-                 id: orderId,
+                id: orderId,
                 userId
-            },
+             },
+            attributes:["id","amount","shippingAddress","phoneNumber","createdAt","orderStatus"],
             include: [
                 {
-                    model:PaymentDetail
+                    model: PaymentDetail,
+                    attributes: ["id","paymentMethod","paymentStatus","pidx"],
                 }
             ]
          })
-        
-        // if (!order) {
-        //     res.status(400).json({
-        //         message: 'no orders found',
-        //     })
-        // } else {
+    const orderdetails = await OrderDetail.findAll({
+            where: {
+                orderId
+            },
+            attributes:["id","quantity"],
+            include: [
+                {
+                    model: Product,
+                    attributes:["id","productImage","productName","productPrice"]
+                }
+            ]
+    })
+        const data = {
+            order,
+            items:orderdetails
+        }
             res.status(200).json({
                 message: 'orders fetch fetch successfully',
-                data:order
+                data
             })
-        // }
+  
 
     }
 
@@ -131,23 +131,19 @@ async fetchMyOrders(req: AuthRequest, res: Response): Promise<void>{
             where: {
                 orderId
             },
+            attributes:["id","quantity"],
             include: [
                 {
-                    model:Product
+                    model: Product,
+                    attributes:["id","productImage","productName","productPrice"]
                 }
             ]
         })
-        // if (orderdetails.length == 0) {
-        //     res.status(400).json({
-        //         message: 'no ordersdetails found',
-        //         data:[]
-        //     })
-        // } else {
+
             res.status(200).json({
                 message: 'fetch successfully',
                 data:orderdetails
             })
-        // }
     }
     async updateShippingDetails(req: AuthRequest, res: Response): Promise<void> {
         const orderId = req.params.id
